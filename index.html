@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tirage de Rôles Secrets</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      text-align: center;
+      padding: 40px;
+    }
+    #container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    select, input, button {
+      font-size: 18px;
+      padding: 10px;
+      margin: 10px 0;
+      width: 90%;
+    }
+    #roleCard {
+      margin-top: 20px;
+      display: none;
+    }
+    .card {
+      background: #fff;
+      border: 2px solid #444;
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+    }
+    .card h2 {
+      margin: 0;
+      font-size: 28px;
+      color: #b30000;
+    }
+    .card p {
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <h1>Tirage de Rôles Secrets</h1>
+    <p>Choisis ton prénom et entre ton code secret pour découvrir ton rôle :</p>
+    <select id="playerSelect">
+      <option value="">-- Choisir un joueur --</option>
+      <option value="Alexia">Alexia</option>
+      <option value="Antoine">Antoine</option>
+      <option value="Chloé">Chloé</option>
+      <option value="Eva">Eva</option>
+      <option value="Corinne">Corinne</option>
+      <option value="Kevin">Kevin</option>
+      <option value="Romain">Romain</option>
+      <option value="Patricia">Patricia</option>
+      <option value="Karl">Karl</option>
+      <option value="Sofia">Sofia</option>
+    </select><br>
+    <input type="password" id="codeInput" placeholder="Code secret" /><br>
+    <button onclick="revealRole()">Découvrir mon rôle</button>
+
+    <div id="roleCard" class="card"></div>
+  </div>
+
+  <script>
+    const fixedRoles = {
+      "Alexia": "Mime",
+      "Antoine": "Sorcière"
+    };
+
+    const playerCodes = {
+      "Alexia": "ALEXIA2025",
+      "Antoine": "ANTOINE2024",
+      "Chloé": "CHLOE2023",
+      "Eva": "EVA2022",
+      "Corinne": "CORINNE2021",
+      "Kevin": "KEVIN2020",
+      "Romain": "ROMAIN2019",
+      "Patricia": "PATRICIA2018",
+      "Karl": "KARL2017",
+      "Sofia": "SOFIA2016"
+    };
+
+    const descriptions = {
+      "Mime": "Tu ne peux pas parler, mais tu peux mimer ton rôle. Tu gagnes avec le village !",
+      "Sorcière": "Tu as deux potions : une pour sauver, une pour tuer. Utilise-les judicieusement.",
+      "Loup-Garou": "Tu fais partie des loups. Chaque nuit, tu votes avec les autres pour tuer un villageois.",
+      "Chasseur": "Si tu meurs, tu peux tirer une dernière balle sur le joueur de ton choix.",
+      "Voyante": "Chaque nuit, tu peux découvrir le rôle d'un joueur.",
+      "Corbeau": "Chaque nuit, tu peux accuser un joueur. Il recevra deux votes au prochain conseil.",
+      "Salvateur": "Protège un joueur chaque nuit. Tu ne peux pas protéger la même personne deux nuits de suite.",
+      "Joueur de Flûte": "Chaque nuit, tu envoûtes deux joueurs. Si tous sont envoûtés, tu gagnes seul."
+    };
+
+    let roles = [
+      "Loup-Garou", "Loup-Garou", "Loup-Garou",
+      "Chasseur", "Voyante", "Corbeau", "Salvateur", "Joueur de Flûte"
+    ];
+
+    let drawn = {};
+
+    function revealRole() {
+      const name = document.getElementById("playerSelect").value;
+      const code = document.getElementById("codeInput").value;
+      const roleDiv = document.getElementById("roleCard");
+
+      if (!name || !code) {
+        alert("Sélectionne un prénom et entre ton code secret.");
+        return;
+      }
+
+      if (playerCodes[name] !== code) {
+        alert("Code incorrect. Tu ne peux voir que ton rôle.");
+        return;
+      }
+
+      if (localStorage.getItem(name)) {
+        roleDiv.style.display = 'block';
+        roleDiv.innerHTML = localStorage.getItem(name);
+        return;
+      }
+
+      let role;
+      if (fixedRoles[name]) {
+        role = fixedRoles[name];
+      } else {
+        const availableRoles = roles.filter(r => !Object.values(drawn).includes(r));
+        if (availableRoles.length === 0) {
+          roleDiv.innerText = "Tous les rôles ont été attribués.";
+          return;
+        }
+        role = availableRoles[Math.floor(Math.random() * availableRoles.length)];
+        drawn[name] = role;
+      }
+
+      const cardHTML = `<h2>${role}</h2><p>${descriptions[role]}</p>`;
+      roleDiv.style.display = 'block';
+      roleDiv.innerHTML = cardHTML;
+      localStorage.setItem(name, cardHTML);
+    }
+  </script>
+</body>
+</html>
