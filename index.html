@@ -71,11 +71,6 @@
   </div>
 
   <script>
-    const fixedRoles = {
-      "Alexia": "Mime",
-      "Antoine": "Sorcière"
-    };
-
     const playerCodes = {
       "Alexia": "ALEXIA2025",
       "Antoine": "ANTOINE2024",
@@ -100,12 +95,18 @@
       "Joueur de Flûte": "Chaque nuit, tu envoûtes deux joueurs. Si tous sont envoûtés, tu gagnes seul."
     };
 
-    let roles = [
-      "Loup-Garou", "Loup-Garou", "Loup-Garou",
-      "Chasseur", "Voyante", "Corbeau", "Salvateur", "Joueur de Flûte"
-    ];
-
-    let drawn = {};
+    const fixedRoles = {
+      "Alexia": "Mime",
+      "Antoine": "Sorcière",
+      "Chloé": "Loup-Garou",
+      "Eva": "Loup-Garou",
+      "Corinne": "Le Corbeau",
+      "Kevin": "Chasseur",
+      "Romain": "Le joueur de flûte",
+      "Patricia": "Loup-Garou",
+      "Karl": "Salvateur",
+      "Sofia": "Voyante"
+    };
 
     function revealRole() {
       const name = document.getElementById("playerSelect").value;
@@ -122,29 +123,10 @@
         return;
       }
 
-      if (localStorage.getItem(name)) {
-        roleDiv.style.display = 'block';
-        roleDiv.innerHTML = localStorage.getItem(name);
-        return;
-      }
-
-      let role;
-      if (fixedRoles[name]) {
-        role = fixedRoles[name];
-      } else {
-        const availableRoles = roles.filter(r => !Object.values(drawn).includes(r));
-        if (availableRoles.length === 0) {
-          roleDiv.innerText = "Tous les rôles ont été attribués.";
-          return;
-        }
-        role = availableRoles[Math.floor(Math.random() * availableRoles.length)];
-        drawn[name] = role;
-      }
-
+      const role = fixedRoles[name];
       const cardHTML = `<h2>${role}</h2><p>${descriptions[role]}</p>`;
       roleDiv.style.display = 'block';
       roleDiv.innerHTML = cardHTML;
-      localStorage.setItem(name, cardHTML);
     }
   </script>
 </body>
